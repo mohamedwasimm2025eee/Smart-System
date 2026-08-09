@@ -288,7 +288,7 @@ function displayMedicines() {
 
     if (filteredMedicines.length === 0) {
 
-        container.innerHTML = `
+        container.innerHTML = 
             <div class="empty-state"
                  style="grid-column:1/-1;
                         text-align:center;
@@ -305,7 +305,7 @@ function displayMedicines() {
                 </p>
 
             </div>
-        `;
+        ;
 
         return;
 
@@ -328,7 +328,7 @@ function displayMedicines() {
             "medicine-card";
 
 
-        card.innerHTML = `
+        card.innerHTML = 
 
             <div class="medicine-header">
 
@@ -395,7 +395,7 @@ function displayMedicines() {
 
             </button>
 
-        `;
+        ;
 
 
         container.appendChild(card);
