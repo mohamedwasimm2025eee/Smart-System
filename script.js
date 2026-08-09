@@ -1,4 +1,4 @@
-```javascript
+
 /* =====================================================
    SMARTMEDITECH
    Medicine Management JavaScript
