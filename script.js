@@ -750,4 +750,4 @@ displayMedicines();
 updateDashboard();
 
 displayDoctors();
-```
+
