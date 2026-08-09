@@ -221,14 +221,105 @@ document
    SAVE MEDICINES
 ===================================================== */
 
-function saveMedicines() {
+function saveMedicine() {
 
+    // Get values
+    const name = document.getElementById("medicineName").value.trim();
+    const batch = document.getElementById("batchNumber").value.trim();
+    const manufacturingDate =
+        document.getElementById("manufacturingDate").value;
+
+    const shelfLife =
+        document.getElementById("shelfLife").value;
+
+    const quantity =
+        document.getElementById("quantity").value;
+
+
+    // Check empty fields
+    if (
+        name === "" ||
+        batch === "" ||
+        manufacturingDate === "" ||
+        shelfLife === "" ||
+        quantity === ""
+    ) {
+        alert("Please fill all medicine details.");
+        return;
+    }
+
+
+    // Convert shelf life to number
+    const months = parseInt(shelfLife);
+
+
+    // Calculate expiry date
+    const expiry = new Date(manufacturingDate);
+
+    expiry.setMonth(
+        expiry.getMonth() + months
+    );
+
+
+    // Format expiry date
+    const expiryDate =
+        expiry.getFullYear() +
+        "-" +
+        String(expiry.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(expiry.getDate()).padStart(2, "0");
+
+
+    // Create medicine object
+    const medicine = {
+
+        id: Date.now(),
+
+        name: name,
+
+        batch: batch,
+
+        manufacturingDate: manufacturingDate,
+
+        shelfLife: months,
+
+        expiryDate: expiryDate,
+
+        quantity: parseInt(quantity)
+
+    };
+
+
+    // Add medicine
+    medicines.push(medicine);
+
+
+    // Save in browser
     localStorage.setItem(
         "smartMediTechMedicines",
         JSON.stringify(medicines)
     );
 
+
+    // Clear form
+    document.getElementById("medicineForm").reset();
+
+
+    // Close popup
+    closeMedicineForm();
+
+
+    // Refresh medicine list
+    displayMedicines();
+
+
+    // Refresh dashboard
+    updateDashboard();
+
+
+    alert("✅ Medicine saved successfully!");
 }
+
 
 
 /* =====================================================
