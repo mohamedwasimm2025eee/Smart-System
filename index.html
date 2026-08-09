@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Smart Meditech</title>
+
+<link rel="stylesheet" href="style.css">
+```
+
+</head>
+
+<body>
+
+```
+<header>
+    <div class="logo">
+        💊 Smart Meditech
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#checker">Expiry Checker</a>
+        <a href="#about">About</a>
+    </nav>
+</header>
+
+
+<section id="home" class="hero">
+
+    <div class="hero-content">
+
+        <h1>Smart Meditech</h1>
+
+        <h2>Medicine Expiry Checker</h2>
+
+        <p>
+            Check your medicine expiry date quickly and easily.
+        </p>
+
+        <a href="#checker" class="start-btn">
+            Check Medicine
+        </a>
+
+    </div>
+
+</section>
+
+
+<section id="checker" class="checker-section">
+
+    <div class="checker-card">
+
+        <h2>💊 Medicine Expiry Checker</h2>
+
+        <p class="description">
+            Enter the medicine name and expiry date.
+        </p>
+
+        <label for="medicineName">
+            Medicine Name
+        </label>
+
+        <input
+            type="text"
+            id="medicineName"
+            placeholder="Example: Paracetamol"
+        >
+
+        <label for="expiryDate">
+            Expiry Date
+        </label>
+
+        <input
+            type="date"
+            id="expiryDate"
+        >
+
+        <button onclick="checkExpiry()">
+            Check Expiry
+        </button>
+
+        <div id="result"></div>
+
+    </div>
+
+</section>
+
+
+<section id="about" class="about">
+
+    <h2>About Smart Meditech</h2>
+
+    <p>
+        Smart Meditech is a simple web application that helps users
+        check the expiry status of medicines using the expiry date
+        printed on the medicine package.
+    </p>
+
+</section>
+
+
+<footer>
+
+    <p>
+        © 2026 Smart Meditech | Medicine Safety Awareness
+    </p>
+
+</footer>
+
+
+<script src="script.js"></script>
+```
+
+</body>
+</html>
