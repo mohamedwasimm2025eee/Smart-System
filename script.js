@@ -1,987 +1,756 @@
-/*
-SMARTMEDITech
-Medicine Management System
-*/
+```javascript
+/* =====================================================
+   SMARTMEDITECH
+   Medicine Management JavaScript
+===================================================== */
 
-/* =========================================
-GET HTML ELEMENTS
-========================================= */
 
-const medicineForm =
-document.getElementById("medicineForm");
+/* ================= DATA ================= */
 
-const medicineName =
-document.getElementById("medicineName");
+let medicines =
+    JSON.parse(localStorage.getItem("smartMediTechMedicines")) || [];
 
-const batchNumber =
-document.getElementById("batchNumber");
 
-const quantity =
-document.getElementById("quantity");
+/* =====================================================
+   MEDICINE EXPIRY CALCULATION
+===================================================== */
 
-const manufacturingDate =
-document.getElementById("manufacturingDate");
+function calculateExpiry(manufacturingDate, shelfLifeMonths) {
 
-const shelfLife =
-document.getElementById("shelfLife");
+    const date = new Date(manufacturingDate);
 
-const shelfUnit =
-document.getElementById("shelfUnit");
-
-const expiryResult =
-document.getElementById("expiryResult");
-
-const medicineList =
-document.getElementById("medicineList");
-
-const search =
-document.getElementById("search");
-
-const cityFilter =
-document.getElementById("cityFilter");
-
-const doctorList =
-document.getElementById("doctorList");
-
-/* =========================================
-MEDICINE DATA
-========================================= */
-
-let medicines = [];
-
-/* =========================================
-LOAD SAVED MEDICINES
-========================================= */
-
-function loadMedicines() {
-
-```
-const saved =
-    localStorage.getItem(
-        "smartMediTechMedicines"
+    date.setMonth(
+        date.getMonth() + Number(shelfLifeMonths)
     );
 
-if (saved) {
-
-    try {
-
-        medicines = JSON.parse(saved);
-
-    } catch (error) {
-
-        medicines = [];
-
-    }
-
-}
-```
-
-}
-
-/* =========================================
-SAVE MEDICINES
-========================================= */
-
-function saveMedicines() {
-
-```
-localStorage.setItem(
-    "smartMediTechMedicines",
-    JSON.stringify(medicines)
-);
-```
-
-}
-
-/* =========================================
-CALCULATE EXPIRY
-========================================= */
-
-function calculateExpiry() {
-
-```
-const dateValue =
-    manufacturingDate.value;
-
-const life =
-    Number(shelfLife.value);
-
-const unit =
-    shelfUnit.value;
-
-
-/*
-    If the user has not entered
-    both values, don't calculate.
-*/
-
-if (!dateValue || !life || life <= 0) {
-
-    expiryResult.textContent =
-        "Enter manufacturing date and shelf life";
-
-    return null;
-
+    return date;
 }
 
 
-/*
-    IMPORTANT:
-    Use date parts instead of
-    new Date("YYYY-MM-DD")
-    to avoid timezone problems.
-*/
-
-const parts =
-    dateValue.split("-");
-
-const year =
-    Number(parts[0]);
-
-const month =
-    Number(parts[1]) - 1;
-
-const day =
-    Number(parts[2]);
-
-
-const expiry =
-    new Date(
-        year,
-        month,
-        day
-    );
-
-
-/* Add shelf life */
-
-if (unit === "months") {
-
-    expiry.setMonth(
-        expiry.getMonth() + life
-    );
-
-}
-
-else if (unit === "years") {
-
-    expiry.setFullYear(
-        expiry.getFullYear() + life
-    );
-
-}
-
-else if (unit === "days") {
-
-    expiry.setDate(
-        expiry.getDate() + life
-    );
-
-}
-
-
-const formatted =
-    formatDate(expiry);
-
-
-expiryResult.textContent =
-    formatted;
-
-
-return expiry;
-```
-
-}
-
-/* =========================================
-FORMAT DATE
-========================================= */
+/* =====================================================
+   DATE FORMAT
+===================================================== */
 
 function formatDate(date) {
 
-```
-const day =
-    String(
-        date.getDate()
-    ).padStart(2, "0");
-
-
-const month =
-    String(
-        date.getMonth() + 1
-    ).padStart(2, "0");
-
-
-const year =
-    date.getFullYear();
-
-
-return `${day}/${month}/${year}`;
-```
+    return date.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
 
 }
 
-/* =========================================
-GET MEDICINE STATUS
-========================================= */
 
-function getStatus(expiryDate) {
+/* =====================================================
+   MEDICINE STATUS
+===================================================== */
 
-```
-const today =
-    new Date();
+function getMedicineStatus(expiryDate) {
 
+    const today = new Date();
 
-today.setHours(
-    0, 0, 0, 0
-);
+    today.setHours(0, 0, 0, 0);
 
+    const expiry = new Date(expiryDate);
 
-const expiry =
-    new Date(
-        expiryDate
-    );
+    expiry.setHours(0, 0, 0, 0);
 
 
-expiry.setHours(
-    0, 0, 0, 0
-);
+    const difference =
+        expiry.getTime() - today.getTime();
 
 
-/*
-    EXPIRED
-*/
+    const days =
+        Math.ceil(
+            difference / (1000 * 60 * 60 * 24)
+        );
 
-if (expiry < today) {
+
+    if (days < 0) {
+
+        return {
+            type: "expired",
+            text: "Expired"
+        };
+
+    }
+
+
+    if (days <= 90) {
+
+        return {
+            type: "expiring",
+            text: "Expiring Soon"
+        };
+
+    }
+
 
     return {
-        name: "Expired",
-        className: "status-expired"
+        type: "safe",
+        text: "Safe"
     };
 
 }
 
 
-/*
-    Calculate remaining days
-*/
+/* =====================================================
+   OPEN MEDICINE FORM
+===================================================== */
 
-const difference =
-    expiry.getTime() -
-    today.getTime();
+function openMedicineForm() {
 
-
-const days =
-    Math.ceil(
-        difference /
-        (1000 * 60 * 60 * 24)
-    );
-
-
-/*
-    EXPIRING WITHIN 30 DAYS
-*/
-
-if (days <= 30) {
-
-    return {
-        name: "Expiring Soon",
-        className: "status-warning"
-    };
+    document
+        .getElementById("medicineModal")
+        .classList.add("active");
 
 }
 
 
-/*
-    SAFE
-*/
+/* =====================================================
+   CLOSE MEDICINE FORM
+===================================================== */
 
-return {
-    name: "Safe",
-    className: "status-safe"
-};
-```
+function closeMedicineForm() {
+
+    document
+        .getElementById("medicineModal")
+        .classList.remove("active");
 
 }
 
-/* =========================================
-ADD MEDICINE
-========================================= */
 
-medicineForm.addEventListener(
-"submit",
-function(event) {
+/* =====================================================
+   ADD MEDICINE
+===================================================== */
 
-```
-    event.preventDefault();
+document
+    .getElementById("medicineForm")
+    .addEventListener("submit", function(event) {
 
-
-    const name =
-        medicineName.value.trim();
+        event.preventDefault();
 
 
-    const batch =
-        batchNumber.value.trim();
+        const name =
+            document
+                .getElementById("medicineName")
+                .value
+                .trim();
 
 
-    const qty =
-        Number(quantity.value);
+        const batch =
+            document
+                .getElementById("batchNumber")
+                .value
+                .trim();
 
 
-    /*
-        Calculate expiry
-    */
-
-    const expiry =
-        calculateExpiry();
+        const manufacturingDate =
+            document
+                .getElementById("manufacturingDate")
+                .value;
 
 
-    if (!expiry) {
+        const shelfLife =
+            document
+                .getElementById("shelfLife")
+                .value;
+
+
+        const quantity =
+            document
+                .getElementById("quantity")
+                .value;
+
+
+        const expiryDate =
+            calculateExpiry(
+                manufacturingDate,
+                shelfLife
+            );
+
+
+        const medicine = {
+
+            id: Date.now(),
+
+            name: name,
+
+            batch: batch,
+
+            manufacturingDate:
+                manufacturingDate,
+
+            shelfLife:
+                Number(shelfLife),
+
+            expiryDate:
+                expiryDate.toISOString(),
+
+            quantity:
+                Number(quantity)
+
+        };
+
+
+        medicines.push(medicine);
+
+
+        saveMedicines();
+
+
+        displayMedicines();
+
+
+        updateDashboard();
+
+
+        this.reset();
+
+
+        closeMedicineForm();
+
 
         alert(
-            "Please enter manufacturing date and shelf life."
+            "Medicine added successfully!\n\nExpiry Date: " +
+            formatDate(expiryDate)
         );
 
-        return;
-
-    }
+    });
 
 
-    if (!name) {
+/* =====================================================
+   SAVE MEDICINES
+===================================================== */
 
-        alert(
-            "Please enter medicine name."
-        );
+function saveMedicines() {
 
-        return;
-
-    }
-
-
-    if (!qty || qty <= 0) {
-
-        alert(
-            "Please enter a valid quantity."
-        );
-
-        return;
-
-    }
-
-
-    /*
-        Create medicine object
-    */
-
-    const medicine = {
-
-        id: Date.now(),
-
-        name: name,
-
-        batch: batch,
-
-        quantity: qty,
-
-        manufacturingDate:
-            manufacturingDate.value,
-
-        expiryDate:
-            expiry.toISOString()
-
-    };
-
-
-    /*
-        Add to array
-    */
-
-    medicines.push(
-        medicine
-    );
-
-
-    /*
-        Save
-    */
-
-    saveMedicines();
-
-
-    /*
-        Display
-    */
-
-    displayMedicines();
-
-
-    updateDashboard();
-
-
-    /*
-        Clear form
-    */
-
-    medicineForm.reset();
-
-
-    expiryResult.textContent =
-        "Enter manufacturing date and shelf life";
-
-
-    alert(
-        "Medicine added successfully!"
+    localStorage.setItem(
+        "smartMediTechMedicines",
+        JSON.stringify(medicines)
     );
 
 }
-```
 
-);
 
-/* =========================================
-DISPLAY MEDICINES
-========================================= */
+/* =====================================================
+   DISPLAY MEDICINES
+===================================================== */
 
 function displayMedicines() {
 
-```
-const keyword =
-    search.value
-    .trim()
-    .toLowerCase();
+    const container =
+        document.getElementById("medicineList");
 
 
-const filtered =
-    medicines.filter(
-        function(medicine) {
-
-            return medicine.name
-                .toLowerCase()
-                .includes(keyword);
-
-        }
-    );
+    const search =
+        document
+            .getElementById("searchMedicine")
+            .value
+            .toLowerCase()
+            .trim();
 
 
-/*
-    No medicine
-*/
-
-if (filtered.length === 0) {
-
-    medicineList.innerHTML = `
-
-        <div class="empty">
-
-            <div>📦</div>
-
-            <h3>No medicines found</h3>
-
-            <p>
-                Add a medicine or search for another name.
-            </p>
-
-        </div>
-
-    `;
-
-    return;
-
-}
+    const filter =
+        document
+            .getElementById("filterMedicine")
+            .value;
 
 
-let html = `
-
-    <div class="table-wrapper">
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Medicine</th>
-
-                    <th>Batch</th>
-
-                    <th>Quantity</th>
-
-                    <th>Manufacturing</th>
-
-                    <th>Expiry</th>
-
-                    <th>Status</th>
-
-                    <th>Action</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-`;
+    container.innerHTML = "";
 
 
-filtered.forEach(
-    function(medicine) {
+    const filteredMedicines =
+        medicines.filter(medicine => {
+
+            const status =
+                getMedicineStatus(
+                    medicine.expiryDate
+                );
+
+
+            const matchesSearch =
+                medicine.name
+                    .toLowerCase()
+                    .includes(search) ||
+                medicine.batch
+                    .toLowerCase()
+                    .includes(search);
+
+
+            const matchesFilter =
+                filter === "all" ||
+                status.type === filter;
+
+
+            return matchesSearch && matchesFilter;
+
+        });
+
+
+    if (filteredMedicines.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-state"
+                 style="grid-column:1/-1;
+                        text-align:center;
+                        padding:50px;
+                        color:#7b8794;">
+
+                <div style="font-size:45px;">💊</div>
+
+                <h3>No medicines found</h3>
+
+                <p>
+                    Add a medicine to start managing
+                    your medicine inventory.
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    filteredMedicines.forEach(medicine => {
 
         const status =
-            getStatus(
+            getMedicineStatus(
                 medicine.expiryDate
             );
 
 
-        html += `
+        const card =
+            document.createElement("div");
 
-            <tr>
 
-                <td>
+        card.className =
+            "medicine-card";
+
+
+        card.innerHTML = `
+
+            <div class="medicine-header">
+
+                <h3>${escapeHTML(medicine.name)}</h3>
+
+                <div class="medicine-icon-small">
+                    💊
+                </div>
+
+            </div>
+
+
+            <div class="medicine-info">
+
+                <p>
+                    <span>Batch</span>
                     <strong>
-                        ${escapeHTML(
-                            medicine.name
+                        ${escapeHTML(medicine.batch)}
+                    </strong>
+                </p>
+
+
+                <p>
+                    <span>Quantity</span>
+                    <strong>
+                        ${medicine.quantity}
+                    </strong>
+                </p>
+
+
+                <p>
+                    <span>Manufactured</span>
+                    <strong>
+                        ${formatDate(
+                            medicine.manufacturingDate
                         )}
                     </strong>
-                </td>
+                </p>
 
-                <td>
-                    ${escapeHTML(
-                        medicine.batch || "-"
-                    )}
-                </td>
 
-                <td>
-                    ${medicine.quantity}
-                </td>
-
-                <td>
-                    ${formatDate(
-                        parseLocalDate(
-                            medicine.manufacturingDate
-                        )
-                    )}
-                </td>
-
-                <td>
-                    ${formatDate(
-                        new Date(
+                <p>
+                    <span>Expiry</span>
+                    <strong>
+                        ${formatDate(
                             medicine.expiryDate
-                        )
-                    )}
-                </td>
+                        )}
+                    </strong>
+                </p>
 
-                <td>
+            </div>
 
-                    <span
-                        class="status
-                        ${status.className}"
-                    >
-                        ${status.name}
-                    </span>
 
-                </td>
+            <span class="status status-${status.type}">
+                ${status.type === "safe" ? "✓" : "⚠"}
+                ${status.text}
+            </span>
 
-                <td>
 
-                    <button
-                        class="delete"
-                        onclick="deleteMedicine(${medicine.id})"
-                    >
-                        🗑
-                    </button>
+            <button
+                class="delete-btn"
+                onclick="deleteMedicine(${medicine.id})">
 
-                </td>
+                🗑 Delete Medicine
 
-            </tr>
+            </button>
 
         `;
 
-    }
-);
 
+        container.appendChild(card);
 
-html += `
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-`;
-
-
-medicineList.innerHTML =
-    html;
-```
+    });
 
 }
 
-/* =========================================
-DELETE MEDICINE
-========================================= */
+
+/* =====================================================
+   DELETE MEDICINE
+===================================================== */
 
 function deleteMedicine(id) {
 
-```
-const answer =
-    confirm(
-        "Delete this medicine?"
-    );
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this medicine?"
+        );
 
 
-if (!answer) {
-
-    return;
-
-}
+    if (!confirmed) {
+        return;
+    }
 
 
-medicines =
-    medicines.filter(
-        function(medicine) {
-
-            return medicine.id !== id;
-
-        }
-    );
+    medicines =
+        medicines.filter(
+            medicine =>
+                medicine.id !== id
+        );
 
 
-saveMedicines();
+    saveMedicines();
 
-displayMedicines();
+    displayMedicines();
 
-updateDashboard();
-```
+    updateDashboard();
 
 }
 
-/* =========================================
-DASHBOARD
-========================================= */
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
 
 function updateDashboard() {
 
-```
-let safeCount = 0;
+    let safe = 0;
 
-let warningCount = 0;
+    let expiring = 0;
 
-let expiredCount = 0;
+    let expired = 0;
 
 
-medicines.forEach(
-    function(medicine) {
+    medicines.forEach(medicine => {
 
         const status =
-            getStatus(
+            getMedicineStatus(
                 medicine.expiryDate
             );
 
 
-        if (
-            status.name === "Safe"
-        ) {
-
-            safeCount++;
-
+        if (status.type === "safe") {
+            safe++;
         }
 
-        else if (
-            status.name === "Expiring Soon"
-        ) {
-
-            warningCount++;
-
+        else if (status.type === "expiring") {
+            expiring++;
         }
 
-        else {
-
-            expiredCount++;
-
+        else if (status.type === "expired") {
+            expired++;
         }
 
-    }
-);
+    });
 
 
-document.getElementById(
-    "total"
-).textContent =
-    medicines.length;
+    document
+        .getElementById("totalMedicines")
+        .textContent = medicines.length;
 
 
-document.getElementById(
-    "safe"
-).textContent =
-    safeCount;
+    document
+        .getElementById("safeMedicines")
+        .textContent = safe;
 
 
-document.getElementById(
-    "soon"
-).textContent =
-    warningCount;
+    document
+        .getElementById("expiringMedicines")
+        .textContent = expiring;
 
 
-document.getElementById(
-    "expired"
-).textContent =
-    expiredCount;
-```
+    document
+        .getElementById("expiredMedicines")
+        .textContent = expired;
 
 }
 
-/* =========================================
-SEARCH
-========================================= */
 
-search.addEventListener(
-"input",
-function() {
+/* =====================================================
+   TAMIL NADU DOCTOR DIRECTORY
+===================================================== */
 
-```
-    displayMedicines();
-
-}
-```
-
-);
-
-/* =========================================
-LIVE EXPIRY CALCULATION
-========================================= */
-
-manufacturingDate.addEventListener(
-"change",
-calculateExpiry
-);
-
-shelfLife.addEventListener(
-"input",
-calculateExpiry
-);
-
-shelfUnit.addEventListener(
-"change",
-calculateExpiry
-);
-
-/* =========================================
-LOCAL DATE PARSER
-========================================= */
-
-function parseLocalDate(value) {
-
-```
-const parts =
-    value.split("-");
-
-
-return new Date(
-    Number(parts[0]),
-    Number(parts[1]) - 1,
-    Number(parts[2])
-);
-```
-
-}
-
-/* =========================================
-DOCTOR DATA
-========================================= */
+/*
+   IMPORTANT:
+   These are DEMONSTRATION records.
+   Replace them with verified doctor/hospital
+   information before publishing the website.
+*/
 
 const doctors = [
 
-```
-{
-    name: "Dr. Arun Kumar",
-    city: "Chennai",
-    specialty: "General Medicine",
-    hospital: "Chennai"
-},
+    {
+        name: "Dr. Arun Kumar",
+        speciality: "General Physician",
+        city: "Chennai",
+        hospital: "Chennai Healthcare Centre",
+        phone: "+91 90000 00001"
+    },
 
-{
-    name: "Dr. Priya",
-    city: "Coimbatore",
-    specialty: "Cardiology",
-    hospital: "Coimbatore"
-},
+    {
+        name: "Dr. Priya Devi",
+        speciality: "Pediatrician",
+        city: "Coimbatore",
+        hospital: "Coimbatore Medical Centre",
+        phone: "+91 90000 00002"
+    },
 
-{
-    name: "Dr. Karthik",
-    city: "Madurai",
-    specialty: "Pediatrics",
-    hospital: "Madurai"
-},
+    {
+        name: "Dr. Rajesh Kumar",
+        speciality: "Cardiologist",
+        city: "Madurai",
+        hospital: "Madurai Heart Centre",
+        phone: "+91 90000 00003"
+    },
 
-{
-    name: "Dr. Divya",
-    city: "Salem",
-    specialty: "Dermatology",
-    hospital: "Salem"
-},
+    {
+        name: "Dr. Meena Lakshmi",
+        speciality: "Dermatologist",
+        city: "Salem",
+        hospital: "Salem Skin Care Centre",
+        phone: "+91 90000 00004"
+    },
 
-{
-    name: "Dr. Suresh",
-    city: "Tiruchirappalli",
-    specialty: "General Medicine",
-    hospital: "Tiruchirappalli"
-}
-```
+    {
+        name: "Dr. Karthik Raj",
+        speciality: "Orthopedic Specialist",
+        city: "Tiruchirappalli",
+        hospital: "Trichy Ortho Care",
+        phone: "+91 90000 00005"
+    },
+
+    {
+        name: "Dr. Divya Anand",
+        speciality: "General Physician",
+        city: "Tiruppur",
+        hospital: "Tiruppur Health Centre",
+        phone: "+91 90000 00006"
+    },
+
+    {
+        name: "Dr. Suresh Babu",
+        speciality: "ENT Specialist",
+        city: "Erode",
+        hospital: "Erode ENT Centre",
+        phone: "+91 90000 00007"
+    },
+
+    {
+        name: "Dr. Nandhini",
+        speciality: "Gynecologist",
+        city: "Tirunelveli",
+        hospital: "Tirunelveli Women's Centre",
+        phone: "+91 90000 00008"
+    },
+
+    {
+        name: "Dr. Mohammed Ali",
+        speciality: "General Physician",
+        city: "Vellore",
+        hospital: "Vellore Health Centre",
+        phone: "+91 90000 00009"
+    }
 
 ];
 
-/* =========================================
-DISPLAY DOCTORS
-========================================= */
+
+/* =====================================================
+   DISPLAY DOCTORS
+===================================================== */
 
 function displayDoctors() {
 
-```
-const city =
-    cityFilter.value;
+    const container =
+        document.getElementById("doctorList");
 
 
-let filteredDoctors;
+    const search =
+        document
+            .getElementById("doctorSearch")
+            .value
+            .toLowerCase()
+            .trim();
 
 
-if (city === "all") {
-
-    filteredDoctors =
-        doctors;
-
-}
-
-else {
-
-    filteredDoctors =
-        doctors.filter(
-            function(doctor) {
-
-                return doctor.city === city;
-
-            }
-        );
-
-}
+    container.innerHTML = "";
 
 
-doctorList.innerHTML = "";
+    const filteredDoctors =
+        doctors.filter(doctor => {
+
+            return (
+
+                doctor.name
+                    .toLowerCase()
+                    .includes(search) ||
+
+                doctor.speciality
+                    .toLowerCase()
+                    .includes(search) ||
+
+                doctor.city
+                    .toLowerCase()
+                    .includes(search)
+
+            );
+
+        });
 
 
-if (
-    filteredDoctors.length === 0
-) {
+    if (filteredDoctors.length === 0) {
 
-    doctorList.innerHTML = `
+        container.innerHTML = `
+            <div style="grid-column:1/-1;
+                        text-align:center;
+                        padding:40px;">
 
-        <div class="empty">
+                <h3>No doctor found</h3>
 
-            <div>👨‍⚕️</div>
+                <p>
+                    Try another name, speciality or city.
+                </p>
 
-            <h3>
-                No doctors found
-            </h3>
+            </div>
+        `;
 
-        </div>
+        return;
 
-    `;
-
-    return;
-
-}
+    }
 
 
-filteredDoctors.forEach(
-    function(doctor) {
+    filteredDoctors.forEach(doctor => {
 
         const card =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         card.className =
             "doctor-card";
 
 
+        const phone =
+            doctor.phone
+                .replace(/\s/g, "");
+
+
         card.innerHTML = `
 
-            <div class="doctor-icon">
+            <div class="doctor-avatar">
                 👨‍⚕️
             </div>
 
+
             <h3>
-                ${escapeHTML(
-                    doctor.name
-                )}
+                ${escapeHTML(doctor.name)}
             </h3>
 
-            <div class="doctor-specialty">
-                ${escapeHTML(
-                    doctor.specialty
-                )}
+
+            <div class="speciality">
+                ${escapeHTML(doctor.speciality)}
             </div>
 
-            <p>
-                📍 ${escapeHTML(
-                    doctor.city
-                )}
-            </p>
 
             <p>
-                🏥 ${escapeHTML(
-                    doctor.hospital
-                )}
+                📍 ${escapeHTML(doctor.city)}
             </p>
+
+
+            <p>
+                🏥 ${escapeHTML(doctor.hospital)}
+            </p>
+
+
+            <a
+                class="call-btn"
+                href="tel:${phone}">
+
+                📞 Contact
+
+            </a>
 
         `;
 
 
-        doctorList.appendChild(
-            card
-        );
+        container.appendChild(card);
 
-    }
-);
-```
+    });
 
 }
 
-/* =========================================
-CITY FILTER
-========================================= */
 
-cityFilter.addEventListener(
-"change",
-displayDoctors
-);
-
-/* =========================================
-BASIC HTML SECURITY
-========================================= */
+/* =====================================================
+   SECURITY HELPER
+===================================================== */
 
 function escapeHTML(value) {
 
-```
-return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-```
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
-/* =========================================
-START WEBSITE
-========================================= */
 
-loadMedicines();
+/* =====================================================
+   MODAL CLICK OUTSIDE
+===================================================== */
+
+document
+    .getElementById("medicineModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+
+            closeMedicineForm();
+
+        }
+
+    });
+
+
+/* =====================================================
+   INITIALIZE WEBSITE
+===================================================== */
 
 displayMedicines();
 
 updateDashboard();
 
 displayDoctors();
+```
