@@ -1,553 +1,356 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SmartMediTech | Smart Medicine Management</title>
+```
+<title>SmartMediTech</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+```
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <header class="navbar">
+```
+<!-- NAVBAR -->
+<header>
+    <div class="logo">
+        💊 Smart<span>MediTech</span>
+    </div>
 
-        <div class="logo">
-            <i class="fa-solid fa-heart-pulse"></i>
-            <span>Smart<span>MediTech</span></span>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#medicine">Medicine</a>
+        <a href="#doctors">Doctors</a>
+    </nav>
+</header>
+
+
+<!-- HERO -->
+<section id="home" class="hero">
+
+    <div class="hero-content">
+
+        <p class="tag">SMART HEALTHCARE MANAGEMENT</p>
+
+        <h1>
+            Manage Your Medicines
+            <span>Smartly & Safely</span>
+        </h1>
+
+        <p class="hero-description">
+            Add your medicines, enter the manufacturing date and
+            shelf life, and SmartMediTech will calculate the
+            estimated expiry date automatically.
+        </p>
+
+        <a href="#medicine" class="hero-button">
+            Add Medicine
+        </a>
+
+    </div>
+
+    <div class="hero-box">
+        <div class="big-icon">💊</div>
+
+        <h2>Medicine Safety</h2>
+
+        <p>
+            Monitor your medicine expiry dates easily.
+        </p>
+
+        <div class="safe">
+            ✓ Smart Expiry Monitoring
+        </div>
+    </div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+<section class="dashboard">
+
+    <h2>Medicine Dashboard</h2>
+
+    <div class="dashboard-container">
+
+        <div class="dashboard-card">
+            <div class="icon blue">💊</div>
+            <h3 id="total">0</h3>
+            <p>Total Medicines</p>
         </div>
 
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#dashboard">Dashboard</a>
-            <a href="#medicines">Medicines</a>
-            <a href="#doctors">Doctors</a>
-        </nav>
-
-        <button class="menu-btn" onclick="toggleMenu()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-
-    </header>
-
-
-    <!-- HERO SECTION -->
-    <section class="hero" id="home">
-
-        <div class="hero-content">
-
-            <div class="hero-text">
-
-                <span class="tag">
-                    <i class="fa-solid fa-shield-heart"></i>
-                    Smart Healthcare Management
-                </span>
-
-                <h1>
-                    Manage Medicines
-                    <span>Smarter & Safer</span>
-                </h1>
-
-                <p>
-                    SmartMediTech helps you manage medicines, calculate
-                    expiry dates, monitor stock and find doctor contacts
-                    across Tamil Nadu.
-                </p>
-
-                <div class="hero-buttons">
-                    <a href="#medicines" class="primary-btn">
-                        <i class="fa-solid fa-plus"></i>
-                        Add Medicine
-                    </a>
-
-                    <a href="#doctors" class="secondary-btn">
-                        <i class="fa-solid fa-user-doctor"></i>
-                        Find Doctors
-                    </a>
-                </div>
-
-            </div>
-
-            <div class="hero-card">
-
-                <div class="medicine-icon">
-                    <i class="fa-solid fa-pills"></i>
-                </div>
-
-                <h3>Medicine Safety</h3>
-
-                <p>
-                    Enter manufacturing date and shelf life.
-                    SmartMediTech calculates the expiry date automatically.
-                </p>
-
-                <div class="safe-status">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Smart Expiry Monitoring
-                </div>
-
-            </div>
-
+        <div class="dashboard-card">
+            <div class="icon green">✓</div>
+            <h3 id="safe">0</h3>
+            <p>Safe</p>
         </div>
 
-    </section>
-
-
-    <!-- DASHBOARD -->
-    <section class="section" id="dashboard">
-
-        <div class="section-title">
-            <span>Overview</span>
-            <h2>Medicine Dashboard</h2>
-            <p>Quickly monitor your medicine inventory.</p>
+        <div class="dashboard-card">
+            <div class="icon orange">⚠</div>
+            <h3 id="soon">0</h3>
+            <p>Expiring Soon</p>
         </div>
 
-        <div class="dashboard-grid">
-
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fa-solid fa-pills"></i>
-                </div>
-
-                <div>
-                    <h3 id="totalMedicines">0</h3>
-                    <p>Total Medicines</p>
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
-                <div>
-                    <h3 id="safeMedicines">0</h3>
-                    <p>Safe Medicines</p>
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="stat-icon orange">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-
-                <div>
-                    <h3 id="expiringMedicines">0</h3>
-                    <p>Expiring Soon</p>
-                </div>
-            </div>
-
-
-            <div class="stat-card">
-                <div class="stat-icon red">
-                    <i class="fa-solid fa-calendar-xmark"></i>
-                </div>
-
-                <div>
-                    <h3 id="expiredMedicines">0</h3>
-                    <p>Expired</p>
-                </div>
-            </div>
-
+        <div class="dashboard-card">
+            <div class="icon red">✕</div>
+            <h3 id="expired">0</h3>
+            <p>Expired</p>
         </div>
 
-    </section>
+    </div>
 
+</section>
 
-    <!-- ADD MEDICINE -->
-    <section class="section medicine-section" id="medicines">
 
-        <div class="section-title">
-            <span>Medicine Management</span>
-            <h2>Add Your Medicines</h2>
-            <p>
-                Enter the manufacturing date. The expiry date will be
-                calculated automatically.
-            </p>
-        </div>
+<!-- MEDICINE SECTION -->
+<section id="medicine" class="medicine-section">
 
+    <div class="section-title">
 
-        <div class="medicine-container">
+        <p class="tag">MEDICINE MANAGEMENT</p>
 
-            <!-- FORM -->
-            <div class="form-card">
+        <h2>Add Medicine</h2>
 
-                <h3>
-                    <i class="fa-solid fa-capsules"></i>
-                    Medicine Details
-                </h3>
+        <p>
+            You don't need to enter the expiry date manually.
+            Enter manufacturing date and shelf life.
+        </p>
 
-                <form id="medicineForm">
-
-                    <div class="input-group">
-
-                        <label>Medicine Name</label>
-
-                        <input
-                            type="text"
-                            id="medicineName"
-                            placeholder="Example: Paracetamol"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="input-row">
-
-                        <div class="input-group">
-
-                            <label>Batch Number</label>
-
-                            <input
-                                type="text"
-                                id="batchNumber"
-                                placeholder="Example: B12345"
-                            >
-
-                        </div>
-
-
-                        <div class="input-group">
-
-                            <label>Quantity</label>
-
-                            <input
-                                type="number"
-                                id="quantity"
-                                placeholder="100"
-                                min="1"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="input-row">
-
-                        <div class="input-group">
-
-                            <label>Manufacturing Date</label>
-
-                            <input
-                                type="date"
-                                id="manufacturingDate"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="input-group">
-
-                            <label>Shelf Life</label>
-
-                            <div class="shelf-input">
-
-                                <input
-                                    type="number"
-                                    id="shelfLife"
-                                    placeholder="24"
-                                    min="1"
-                                    required
-                                >
-
-                                <select id="shelfUnit">
-                                    <option value="months">Months</option>
-                                    <option value="years">Years</option>
-                                    <option value="days">Days</option>
-                                </select>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- AUTOMATIC EXPIRY -->
-                    <div class="expiry-preview">
-
-                        <div>
-                            <i class="fa-solid fa-calendar-check"></i>
-                        </div>
-
-                        <div>
-                            <small>Calculated Expiry Date</small>
-                            <strong id="expiryPreview">
-                                Enter manufacturing date & shelf life
-                            </strong>
-                        </div>
-
-                    </div>
-
-
-                    <button type="submit" class="add-btn">
-
-                        <i class="fa-solid fa-plus"></i>
-
-                        Add Medicine
-
-                    </button>
-
-                </form>
-
-            </div>
-
-
-            <!-- INFO CARD -->
-            <div class="info-card">
-
-                <div class="info-icon">
-                    <i class="fa-solid fa-lightbulb"></i>
-                </div>
-
-                <h3>How It Works</h3>
-
-                <div class="step">
-
-                    <span>01</span>
-
-                    <div>
-                        <strong>Enter Medicine</strong>
-                        <p>Add the medicine name and quantity.</p>
-                    </div>
-
-                </div>
-
-
-                <div class="step">
-
-                    <span>02</span>
-
-                    <div>
-                        <strong>Enter Manufacturing Date</strong>
-                        <p>Enter the date printed on the medicine.</p>
-                    </div>
-
-                </div>
-
-
-                <div class="step">
-
-                    <span>03</span>
-
-                    <div>
-                        <strong>Enter Shelf Life</strong>
-                        <p>For example, 24 months.</p>
-                    </div>
-
-                </div>
-
-
-                <div class="step">
-
-                    <span>04</span>
-
-                    <div>
-                        <strong>Expiry Automatically Calculated</strong>
-                        <p>The system calculates the estimated expiry date.</p>
-                    </div>
-
-                </div>
-
-                <div class="warning-box">
-
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-
-                    <p>
-                        Always verify the calculated date against the
-                        manufacturer's official expiry information.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SEARCH -->
-        <div class="medicine-list">
-
-            <div class="list-header">
-
-                <div>
-                    <h3>Medicine Inventory</h3>
-                    <p>Manage your saved medicines</p>
-                </div>
-
-                <div class="search-box">
-
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                    <input
-                        type="text"
-                        id="searchMedicine"
-                        placeholder="Search medicine..."
-                        oninput="displayMedicines()"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div id="medicineTableContainer">
-
-                <div class="empty-state">
-
-                    <i class="fa-solid fa-box-open"></i>
-
-                    <h3>No medicines added</h3>
-
-                    <p>
-                        Add your first medicine using the form above.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- DOCTORS -->
-    <section class="section doctors-section" id="doctors">
-
-        <div class="section-title">
-
-            <span>Tamil Nadu Healthcare</span>
-
-            <h2>Doctor Directory</h2>
-
-            <p>
-                Find healthcare professionals by city or specialty.
-            </p>
-
-        </div>
-
-
-        <!-- NOTE: DEMO DIRECTORY -->
-        <div class="doctor-filter">
-
-            <select id="doctorCity" onchange="filterDoctors()">
-
-                <option value="all">All Cities</option>
-                <option value="Chennai">Chennai</option>
-                <option value="Coimbatore">Coimbatore</option>
-                <option value="Madurai">Madurai</option>
-                <option value="Salem">Salem</option>
-                <option value="Tiruchirappalli">Tiruchirappalli</option>
-                <option value="Tirunelveli">Tirunelveli</option>
-
-            </select>
-
-
-            <select id="doctorSpecialty" onchange="filterDoctors()">
-
-                <option value="all">All Specialties</option>
-                <option value="General Medicine">General Medicine</option>
-                <option value="Cardiology">Cardiology</option>
-                <option value="Pediatrics">Pediatrics</option>
-                <option value="Dermatology">Dermatology</option>
-
-            </select>
-
-        </div>
-
-
-        <div class="doctor-grid" id="doctorGrid">
-            <!-- JavaScript will add doctors here -->
-        </div>
-
-    </section>
-
-
-    <!-- SAFETY -->
-    <section class="safety-section">
-
-        <div class="safety-content">
-
-            <div class="safety-icon">
-                <i class="fa-solid fa-shield-heart"></i>
-            </div>
-
-            <div>
-
-                <h2>Medicine Safety First</h2>
-
-                <p>
-                    SmartMediTech is designed to help organize medicine
-                    information. It does not replace advice from a qualified
-                    doctor or pharmacist.
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- FOOTER -->
-    <footer>
-
-        <div class="footer-content">
-
-            <div class="logo">
-
-                <i class="fa-solid fa-heart-pulse"></i>
-
-                <span>
-                    Smart<span>MediTech</span>
-                </span>
-
-            </div>
-
-            <p>
-                Smart medicine management for a healthier tomorrow.
-            </p>
-
-        </div>
-
-
-        <div class="footer-bottom">
-
-            <p>
-                © 2026 SmartMediTech. All rights reserved.
-            </p>
-
-            <p>
-                Made with ❤️ for better healthcare management.
-            </p>
-
-        </div>
-
-    </footer>
-
-
-    <!-- TOAST -->
-    <div id="toast" class="toast">
-        <i class="fa-solid fa-circle-check"></i>
-        <span id="toastMessage">Medicine added successfully!</span>
     </div>
 
 
-    <script src="script.js"></script>
+    <!-- FORM -->
+    <div class="medicine-form">
+
+        <h2>💊 Medicine Details</h2>
+
+        <form id="medicineForm">
+
+            <label>
+                Medicine Name
+            </label>
+
+            <input
+                type="text"
+                id="medicineName"
+                placeholder="Example: Paracetamol"
+                required
+            >
+
+
+            <label>
+                Batch Number
+            </label>
+
+            <input
+                type="text"
+                id="batchNumber"
+                placeholder="Example: B12345"
+            >
+
+
+            <label>
+                Quantity
+            </label>
+
+            <input
+                type="number"
+                id="quantity"
+                placeholder="Example: 100"
+                min="1"
+                required
+            >
+
+
+            <label>
+                Manufacturing Date
+            </label>
+
+            <input
+                type="date"
+                id="manufacturingDate"
+                required
+            >
+
+
+            <label>
+                Shelf Life
+            </label>
+
+            <div class="shelf-row">
+
+                <input
+                    type="number"
+                    id="shelfLife"
+                    placeholder="Example: 24"
+                    min="1"
+                    required
+                >
+
+                <select id="shelfUnit">
+
+                    <option value="months">
+                        Months
+                    </option>
+
+                    <option value="years">
+                        Years
+                    </option>
+
+                    <option value="days">
+                        Days
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- EXPIRY RESULT -->
+            <div class="expiry-box">
+
+                <p>Estimated Expiry Date</p>
+
+                <h3 id="expiryResult">
+                    Enter manufacturing date and shelf life
+                </h3>
+
+            </div>
+
+
+            <button type="submit">
+                ➕ Add Medicine
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SEARCH -->
+    <div class="inventory">
+
+        <div class="inventory-header">
+
+            <div>
+                <h2>Medicine Inventory</h2>
+                <p>Your added medicines appear here.</p>
+            </div>
+
+            <input
+                type="text"
+                id="search"
+                placeholder="🔍 Search medicine..."
+            >
+
+        </div>
+
+
+        <div id="medicineList">
+
+            <div class="empty">
+                <div>📦</div>
+
+                <h3>No medicines added</h3>
+
+                <p>
+                    Add your first medicine above.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- DOCTORS -->
+<section id="doctors" class="doctors">
+
+    <div class="section-title">
+
+        <p class="tag">TAMIL NADU HEALTHCARE</p>
+
+        <h2>Doctor Directory</h2>
+
+        <p>
+            Search doctors by city.
+        </p>
+
+    </div>
+
+
+    <div class="doctor-filter">
+
+        <select id="cityFilter">
+
+            <option value="all">
+                All Cities
+            </option>
+
+            <option value="Chennai">
+                Chennai
+            </option>
+
+            <option value="Coimbatore">
+                Coimbatore
+            </option>
+
+            <option value="Madurai">
+                Madurai
+            </option>
+
+            <option value="Salem">
+                Salem
+            </option>
+
+            <option value="Tiruchirappalli">
+                Tiruchirappalli
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div id="doctorList" class="doctor-list">
+    </div>
+
+    <p class="doctor-note">
+        Note: The doctor information shown here is sample data.
+        Verify doctor/hospital details before publishing a real directory.
+    </p>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <h2>
+        💊 Smart<span>MediTech</span>
+    </h2>
+
+    <p>
+        Smart medicine management for a healthier tomorrow.
+    </p>
+
+    <p class="copyright">
+        © 2026 SmartMediTech
+    </p>
+
+</footer>
+
+
+<!-- JAVASCRIPT -->
+<script src="script.js"></script>
+```
 
 </body>
 </html>
