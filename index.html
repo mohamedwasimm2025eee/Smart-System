@@ -1,192 +1,248 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<title>Smart Meditech</title>
+    <title>Smart Meditech</title>
 
-<link rel="stylesheet" href="style.css">
-```
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-```
-<!-- Header -->
-<header class="header">
+<header>
     <div class="logo">
-        💊 Smart Meditech
+        <span>💊</span>
+        Smart Meditech
     </div>
 
-    <div class="header-right">
-        Medicine Management System
-    </div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#checker">Expiry Checker</a>
+        <a href="#features">Features</a>
+    </nav>
 </header>
 
 
-<!-- Main Container -->
-<main class="container">
+<!-- HOME -->
 
-    <!-- Welcome -->
-    <section class="welcome">
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div class="hero-icon">🏥</div>
+
         <h1>Smart Meditech</h1>
-        <p>Medicine Inventory & Expiry Date Management</p>
-    </section>
+
+        <h2>Medicine Expiry Checker</h2>
+
+        <p>
+            Check your medicine expiry date quickly,
+            easily and safely.
+        </p>
+
+        <a href="#checker" class="hero-btn">
+            Check Medicine
+        </a>
+
+    </div>
+
+</section>
 
 
-    <!-- Dashboard -->
-    <section class="dashboard">
+<!-- EXPIRY CHECKER -->
 
-        <div class="dashboard-card">
-            <div class="icon">💊</div>
-            <div>
-                <h3>Total Medicines</h3>
-                <span id="totalMedicines">0</span>
-            </div>
-        </div>
+<section class="checker-section" id="checker">
 
-        <div class="dashboard-card safe">
-            <div class="icon">🟢</div>
-            <div>
-                <h3>Safe</h3>
-                <span id="safeMedicines">0</span>
-            </div>
-        </div>
+    <div class="section-title">
 
-        <div class="dashboard-card warning">
-            <div class="icon">🟠</div>
-            <div>
-                <h3>Expiring Soon</h3>
-                <span id="soonMedicines">0</span>
-            </div>
-        </div>
+        <h2>💊 Medicine Expiry Checker</h2>
 
-        <div class="dashboard-card expired">
-            <div class="icon">🔴</div>
-            <div>
-                <h3>Expired</h3>
-                <span id="expiredMedicines">0</span>
-            </div>
-        </div>
+        <p>
+            Enter the details from your medicine package.
+        </p>
 
-    </section>
+    </div>
 
 
-    <!-- Add Medicine -->
-    <section class="form-section">
+    <div class="checker-container">
 
-        <h2>➕ Add Medicine</h2>
 
-        <form id="medicineForm">
+        <!-- FORM -->
+
+        <div class="form-card">
+
+            <h3>📋 Medicine Details</h3>
+
 
             <div class="input-group">
-                <label>Medicine Name</label>
+
+                <label for="medicineName">
+                    Medicine Name
+                </label>
+
                 <input
                     type="text"
                     id="medicineName"
-                    placeholder="Enter medicine name"
-                    required
+                    placeholder="Example: Paracetamol"
                 >
+
             </div>
 
+
             <div class="input-group">
-                <label>Batch Number</label>
+
+                <label for="batchNumber">
+                    Batch Number
+                </label>
+
                 <input
                     type="text"
                     id="batchNumber"
-                    placeholder="Enter batch number"
-                    required
+                    placeholder="Example: PCM2026A"
                 >
+
             </div>
 
-            <div class="input-group">
-                <label>Quantity</label>
-                <input
-                    type="number"
-                    id="quantity"
-                    placeholder="Enter quantity"
-                    min="1"
-                    required
-                >
-            </div>
 
             <div class="input-group">
-                <label>Expiry Date</label>
+
+                <label for="expiryDate">
+                    Expiry Date
+                </label>
+
                 <input
                     type="date"
                     id="expiryDate"
-                    required
                 >
+
             </div>
 
-            <button type="submit" class="add-btn">
-                ➕ Add Medicine
+
+            <button
+                type="button"
+                id="checkButton"
+            >
+                🔍 Check Expiry
             </button>
 
-        </form>
 
-    </section>
-
-
-    <!-- Medicine List -->
-    <section class="medicine-section">
-
-        <div class="section-header">
-
-            <h2>💊 Medicine Inventory</h2>
-
-            <input
-                type="text"
-                id="searchMedicine"
-                placeholder="🔍 Search medicine..."
+            <button
+                type="button"
+                id="clearButton"
+                class="clear-button"
             >
+                Clear
+            </button>
 
         </div>
 
 
-        <div class="table-container">
+        <!-- RESULT -->
 
-            <table>
+        <div class="result-card" id="resultCard">
 
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>Batch</th>
-                        <th>Quantity</th>
-                        <th>Expiry Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+            <div class="empty-result">
 
-                <tbody id="medicineTableBody">
-                </tbody>
+                <div class="empty-icon">
+                    💊
+                </div>
 
-            </table>
+                <h3>Ready to Check</h3>
+
+                <p>
+                    Enter medicine details and click
+                    "Check Expiry".
+                </p>
+
+            </div>
 
         </div>
 
-        <p id="emptyMessage" class="empty-message">
-            No medicines added yet.
+    </div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section class="features" id="features">
+
+    <div class="section-title">
+
+        <h2>Smart Features</h2>
+
+        <p>
+            Simple medicine expiry management.
         </p>
 
-    </section>
-
-</main>
+    </div>
 
 
-<!-- Footer -->
+    <div class="feature-container">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">🔍</div>
+
+            <h3>Expiry Checking</h3>
+
+            <p>
+                Check whether a medicine has expired.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">📅</div>
+
+            <h3>Days Remaining</h3>
+
+            <p>
+                Calculate the remaining days automatically.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">🔖</div>
+
+            <h3>Batch Number</h3>
+
+            <p>
+                Record the medicine batch number.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
 <footer>
-    <p>© 2026 Smart Meditech | Medicine Management System</p>
+
+    <h3>💊 Smart Meditech</h3>
+
+    <p>
+        Medicine Expiry Awareness System
+    </p>
+
+    <p>
+        © 2026 Smart Meditech
+    </p>
+
 </footer>
 
 
+<!-- IMPORTANT -->
+
 <script src="script.js"></script>
-```
 
 </body>
 </html>
