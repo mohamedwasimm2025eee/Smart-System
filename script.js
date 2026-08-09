@@ -4,9 +4,6 @@
    Medicine Management JavaScript
 ===================================================== */
 
-
-/* ================= DATA ================= */
-
 let medicines =
     JSON.parse(localStorage.getItem("smartMediTechMedicines")) || [];
 
