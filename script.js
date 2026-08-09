@@ -1,1170 +1,887 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f5f9fc;
-    color: #183b56;
-}
+/* =================================
+   SMART MEDITEC
+   MEDICINE MANAGEMENT SYSTEM
+================================= */
 
 
-/* =========================
-   NAVBAR
-========================= */
+/* =================================
+   DATA
+================================= */
 
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-
-    height: 75px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 7%;
-
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(12px);
-
-    border-bottom: 1px solid #e4edf3;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    font-size: 22px;
-    font-weight: 800;
-}
-
-.logo i {
-    font-size: 28px;
-    color: #0a9b8f;
-}
-
-.logo span span {
-    color: #0a9b8f;
-}
-
-.navbar nav {
-    display: flex;
-    gap: 30px;
-}
-
-.navbar nav a {
-    text-decoration: none;
-    color: #526777;
-    font-weight: 600;
-    transition: 0.3s;
-}
-
-.navbar nav a:hover {
-    color: #0a9b8f;
-}
-
-.menu-btn {
-    display: none;
-
-    border: none;
-    background: none;
-
-    font-size: 24px;
-}
+let medicines =
+    JSON.parse(localStorage.getItem("smartMediTechMedicines")) || [];
 
 
-/* =========================
-   HERO
-========================= */
+/* =================================
+   DOCTOR DATA
+   DEMO DATA ONLY
+================================= */
 
-.hero {
-    min-height: 620px;
+const doctors = [
 
-    display: flex;
-    align-items: center;
+    {
+        name: "Dr. Arun Kumar",
+        specialty: "General Medicine",
+        city: "Chennai",
+        hospital: "Chennai",
+        phone: "0000000000"
+    },
 
-    background:
-        radial-gradient(circle at 80% 20%, #dff8f5, transparent 35%),
-        linear-gradient(135deg, #f5fffe, #eef8ff);
+    {
+        name: "Dr. Priya",
+        specialty: "Cardiology",
+        city: "Coimbatore",
+        hospital: "Coimbatore",
+        phone: "0000000000"
+    },
 
-    padding: 70px 7%;
-}
+    {
+        name: "Dr. Karthik",
+        specialty: "Pediatrics",
+        city: "Madurai",
+        hospital: "Madurai",
+        phone: "0000000000"
+    },
 
-.hero-content {
-    width: 100%;
+    {
+        name: "Dr. Divya",
+        specialty: "Dermatology",
+        city: "Salem",
+        hospital: "Salem",
+        phone: "0000000000"
+    },
 
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
+    {
+        name: "Dr. Suresh",
+        specialty: "General Medicine",
+        city: "Tiruchirappalli",
+        hospital: "Tiruchirappalli",
+        phone: "0000000000"
+    },
 
-    align-items: center;
+    {
+        name: "Dr. Meena",
+        specialty: "Cardiology",
+        city: "Tirunelveli",
+        hospital: "Tirunelveli",
+        phone: "0000000000"
+    }
 
-    gap: 80px;
-}
+];
 
-.tag {
-    display: inline-block;
 
-    background: #e1f8f5;
-    color: #087f76;
+/* =================================
+   CALCULATE EXPIRY DATE
+================================= */
 
-    padding: 10px 18px;
+function calculateExpiry() {
 
-    border-radius: 50px;
+    const manufacturingDate =
+        document.getElementById("manufacturingDate").value;
 
-    font-size: 14px;
-    font-weight: 700;
-}
+    const shelfLife =
+        Number(document.getElementById("shelfLife").value);
 
-.hero h1 {
-    font-size: clamp(42px, 6vw, 70px);
+    const shelfUnit =
+        document.getElementById("shelfUnit").value;
 
-    line-height: 1.05;
+    const preview =
+        document.getElementById("expiryPreview");
 
-    margin: 25px 0;
-}
 
-.hero h1 span {
-    display: block;
-    color: #0a9b8f;
-}
+    if (!manufacturingDate || !shelfLife) {
 
-.hero-text p {
-    max-width: 650px;
+        preview.textContent =
+            "Enter manufacturing date & shelf life";
 
-    font-size: 18px;
+        return null;
+    }
 
-    line-height: 1.7;
 
-    color: #627888;
-}
+    const date = new Date(manufacturingDate);
 
-.hero-buttons {
-    display: flex;
-    gap: 15px;
 
-    margin-top: 35px;
-}
+    if (shelfUnit === "months") {
 
-.primary-btn,
-.secondary-btn {
-    display: inline-flex;
+        date.setMonth(
+            date.getMonth() + shelfLife
+        );
 
-    align-items: center;
-    gap: 10px;
+    }
 
-    padding: 15px 25px;
 
-    border-radius: 12px;
+    else if (shelfUnit === "years") {
 
-    text-decoration: none;
+        date.setFullYear(
+            date.getFullYear() + shelfLife
+        );
 
-    font-weight: 700;
+    }
 
-    transition: 0.3s;
-}
 
-.primary-btn {
-    background: #0a9b8f;
-    color: white;
-}
+    else if (shelfUnit === "days") {
 
-.primary-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(10,155,143,0.25);
-}
+        date.setDate(
+            date.getDate() + shelfLife
+        );
 
-.secondary-btn {
-    background: white;
-    color: #087f76;
+    }
 
-    border: 1px solid #d7e9e7;
-}
 
-.secondary-btn:hover {
-    transform: translateY(-3px);
+    const expiryDate =
+        formatDate(date);
+
+
+    preview.textContent =
+        expiryDate;
+
+
+    return date;
 }
 
 
-/* HERO CARD */
+/* =================================
+   FORMAT DATE
+================================= */
 
-.hero-card {
-    background: white;
+function formatDate(date) {
 
-    padding: 45px;
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
 
-    border-radius: 30px;
-
-    box-shadow:
-        0 25px 70px rgba(34,79,102,0.12);
-
-    text-align: center;
-}
-
-.medicine-icon {
-    width: 100px;
-    height: 100px;
-
-    margin: auto auto 25px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #e2f8f5;
-
-    border-radius: 30px;
-
-    color: #0a9b8f;
-
-    font-size: 45px;
-}
-
-.hero-card h3 {
-    font-size: 25px;
-    margin-bottom: 15px;
-}
-
-.hero-card p {
-    color: #718392;
-    line-height: 1.7;
-}
-
-.safe-status {
-    margin-top: 25px;
-
-    padding: 13px;
-
-    background: #edfaf4;
-
-    color: #188653;
-
-    border-radius: 10px;
-
-    font-weight: 700;
 }
 
 
-/* =========================
-   SECTION
-========================= */
+/* =================================
+   GET STATUS
+================================= */
 
-.section {
-    padding: 90px 7%;
+function getMedicineStatus(expiryDate) {
+
+    const today = new Date();
+
+    const expiry = new Date(expiryDate);
+
+
+    today.setHours(0,0,0,0);
+
+    expiry.setHours(0,0,0,0);
+
+
+    if (expiry < today) {
+
+        return {
+            text: "Expired",
+            className: "expired"
+        };
+
+    }
+
+
+    const difference =
+        expiry - today;
+
+    const daysLeft =
+        Math.ceil(
+            difference /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+    if (daysLeft <= 30) {
+
+        return {
+            text: "Expiring Soon",
+            className: "warning"
+        };
+
+    }
+
+
+    return {
+        text: "Safe",
+        className: "safe"
+    };
+
 }
 
-.section-title {
-    text-align: center;
 
-    margin-bottom: 45px;
+/* =================================
+   FORM SUBMIT
+================================= */
+
+document
+    .getElementById("medicineForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+
+        const name =
+            document
+            .getElementById("medicineName")
+            .value
+            .trim();
+
+
+        const batch =
+            document
+            .getElementById("batchNumber")
+            .value
+            .trim();
+
+
+        const quantity =
+            Number(
+                document
+                .getElementById("quantity")
+                .value
+            );
+
+
+        const manufacturingDate =
+            document
+            .getElementById("manufacturingDate")
+            .value;
+
+
+        const shelfLife =
+            Number(
+                document
+                .getElementById("shelfLife")
+                .value
+            );
+
+
+        const shelfUnit =
+            document
+            .getElementById("shelfUnit")
+            .value;
+
+
+        const expiryDate =
+            calculateExpiry();
+
+
+        if (!expiryDate) {
+
+            showToast(
+                "Please enter valid medicine details."
+            );
+
+            return;
+        }
+
+
+        const medicine = {
+
+            id: Date.now(),
+
+            name: name,
+
+            batch: batch,
+
+            quantity: quantity,
+
+            manufacturingDate:
+                manufacturingDate,
+
+            shelfLife:
+                shelfLife,
+
+            shelfUnit:
+                shelfUnit,
+
+            expiryDate:
+                expiryDate.toISOString()
+
+        };
+
+
+        medicines.push(medicine);
+
+
+        saveMedicines();
+
+
+        displayMedicines();
+
+
+        updateDashboard();
+
+
+        this.reset();
+
+
+        document
+            .getElementById("expiryPreview")
+            .textContent =
+            "Enter manufacturing date & shelf life";
+
+
+        showToast(
+            "Medicine added successfully!"
+        );
+
+    });
+
+
+/* =================================
+   SAVE MEDICINES
+================================= */
+
+function saveMedicines() {
+
+    localStorage.setItem(
+        "smartMediTechMedicines",
+        JSON.stringify(medicines)
+    );
+
 }
 
-.section-title span {
-    color: #0a9b8f;
 
-    font-size: 14px;
+/* =================================
+   DISPLAY MEDICINES
+================================= */
 
-    font-weight: 800;
+function displayMedicines() {
 
-    text-transform: uppercase;
+    const container =
+        document.getElementById(
+            "medicineTableContainer"
+        );
 
-    letter-spacing: 1px;
+
+    const search =
+        document
+        .getElementById("searchMedicine")
+        .value
+        .toLowerCase();
+
+
+    const filtered =
+        medicines.filter(
+            medicine =>
+                medicine.name
+                .toLowerCase()
+                .includes(search)
+        );
+
+
+    if (filtered.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <h3>
+                    No medicines found
+                </h3>
+
+                <p>
+                    Add a medicine or try another search.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    let table = `
+
+        <table class="medicine-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Medicine</th>
+
+                    <th>Batch</th>
+
+                    <th>Quantity</th>
+
+                    <th>Manufacturing</th>
+
+                    <th>Expiry</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+    `;
+
+
+    filtered.forEach(medicine => {
+
+        const status =
+            getMedicineStatus(
+                medicine.expiryDate
+            );
+
+
+        table += `
+
+            <tr>
+
+                <td>
+                    <strong>
+                        ${escapeHTML(medicine.name)}
+                    </strong>
+                </td>
+
+                <td>
+                    ${escapeHTML(medicine.batch || "-")}
+                </td>
+
+                <td>
+                    ${medicine.quantity}
+                </td>
+
+                <td>
+                    ${formatDate(
+                        new Date(
+                            medicine.manufacturingDate
+                        )
+                    )}
+                </td>
+
+                <td>
+                    ${formatDate(
+                        new Date(
+                            medicine.expiryDate
+                        )
+                    )}
+                </td>
+
+                <td>
+
+                    <span class="status ${status.className}">
+                        ${status.text}
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteMedicine(${medicine.id})"
+                    >
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    table += `
+
+            </tbody>
+
+        </table>
+
+    `;
+
+
+    container.innerHTML = table;
+
 }
 
-.section-title h2 {
-    font-size: 38px;
 
-    margin: 10px 0;
+/* =================================
+   DELETE MEDICINE
+================================= */
+
+function deleteMedicine(id) {
+
+    medicines =
+        medicines.filter(
+            medicine =>
+                medicine.id !== id
+        );
+
+
+    saveMedicines();
+
+    displayMedicines();
+
+    updateDashboard();
+
+    showToast(
+        "Medicine removed."
+    );
+
 }
 
-.section-title p {
-    color: #718392;
-}
 
-
-/* =========================
+/* =================================
    DASHBOARD
-========================= */
+================================= */
 
-.dashboard-grid {
-    display: grid;
+function updateDashboard() {
 
-    grid-template-columns: repeat(4,1fr);
+    let safe = 0;
 
-    gap: 20px;
-}
-
-.stat-card {
-    background: white;
-
-    padding: 25px;
-
-    border-radius: 18px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-
-    box-shadow: 0 10px 35px rgba(30,70,90,0.07);
-
-    transition: 0.3s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    width: 55px;
-    height: 55px;
-
-    border-radius: 15px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 23px;
-}
-
-.blue {
-    background: #e8f2ff;
-    color: #377bd6;
-}
-
-.green {
-    background: #e7f8ef;
-    color: #1c9c61;
-}
-
-.orange {
-    background: #fff3dd;
-    color: #e49b21;
-}
-
-.red {
-    background: #ffe9e9;
-    color: #df5151;
-}
-
-.stat-card h3 {
-    font-size: 27px;
-}
-
-.stat-card p {
-    color: #7b8c98;
-
-    margin-top: 4px;
-}
-
-
-/* =========================
-   MEDICINE SECTION
-========================= */
-
-.medicine-section {
-    background: #eef8f7;
-}
-
-.medicine-container {
-    display: grid;
-
-    grid-template-columns: 1fr 0.75fr;
-
-    gap: 30px;
-
-    max-width: 1200px;
-
-    margin: auto;
-}
-
-.form-card,
-.info-card,
-.medicine-list {
-    background: white;
-
-    border-radius: 25px;
-
-    padding: 35px;
-
-    box-shadow: 0 15px 45px rgba(30,70,90,0.07);
-}
-
-.form-card h3 {
-    font-size: 23px;
-
-    margin-bottom: 30px;
-
-    display: flex;
-
-    gap: 10px;
-
-    align-items: center;
-}
-
-.form-card h3 i {
-    color: #0a9b8f;
-}
-
-.input-group {
-    margin-bottom: 20px;
-
-    flex: 1;
-}
-
-.input-group label {
-    display: block;
-
-    margin-bottom: 8px;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    color: #405b6c;
-}
-
-.input-group input,
-.input-group select,
-.doctor-filter select {
-    width: 100%;
-
-    padding: 14px 15px;
-
-    border: 1px solid #dce8ee;
-
-    border-radius: 10px;
-
-    outline: none;
-
-    font-size: 15px;
-
-    background: white;
-}
-
-.input-group input:focus,
-.input-group select:focus {
-    border-color: #0a9b8f;
-
-    box-shadow: 0 0 0 3px rgba(10,155,143,0.08);
-}
-
-.input-row {
-    display: flex;
-
-    gap: 15px;
-}
-
-.shelf-input {
-    display: flex;
-    gap: 8px;
-}
-
-.shelf-input input {
-    width: 55%;
-}
-
-.shelf-input select {
-    width: 45%;
-}
-
-
-/* EXPIRY */
-
-.expiry-preview {
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 18px;
-
-    background: #edfafa;
-
-    border: 1px solid #cfeeea;
-
-    border-radius: 14px;
-
-    margin: 10px 0 20px;
-}
-
-.expiry-preview > div:first-child {
-    width: 45px;
-    height: 45px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #0a9b8f;
-
-    color: white;
-
-    border-radius: 12px;
-}
-
-.expiry-preview small {
-    display: block;
-
-    color: #66808c;
-
-    margin-bottom: 4px;
-}
-
-.expiry-preview strong {
-    color: #087f76;
-}
-
-
-/* BUTTON */
-
-.add-btn {
-    width: 100%;
-
-    padding: 15px;
-
-    border: none;
-
-    border-radius: 12px;
-
-    background: #0a9b8f;
-
-    color: white;
-
-    font-size: 16px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-}
-
-.add-btn:hover {
-    background: #087f76;
+    let warning = 0;
 
-    transform: translateY(-2px);
-}
-
-
-/* =========================
-   INFO CARD
-========================= */
-
-.info-icon {
-    width: 60px;
-    height: 60px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #fff3dc;
-
-    color: #df991f;
-
-    border-radius: 17px;
-
-    font-size: 25px;
-
-    margin-bottom: 20px;
-}
-
-.info-card h3 {
-    font-size: 25px;
-
-    margin-bottom: 25px;
-}
-
-.step {
-    display: flex;
-
-    gap: 15px;
-
-    margin: 22px 0;
-}
-
-.step span {
-    min-width: 40px;
-    height: 40px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #e8f8f6;
-
-    color: #0a9b8f;
-
-    border-radius: 50%;
-
-    font-weight: 800;
-
-    font-size: 12px;
-}
-
-.step strong {
-    display: block;
-
-    margin-bottom: 4px;
-}
-
-.step p {
-    color: #718392;
-
-    font-size: 14px;
-
-    line-height: 1.5;
-}
-
-.warning-box {
-    display: flex;
-
-    gap: 10px;
-
-    padding: 15px;
-
-    background: #fff8e9;
-
-    border-radius: 12px;
-
-    color: #9a6a1b;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================
-   MEDICINE LIST
-========================= */
-
-.medicine-list {
-    margin-top: 30px;
-}
-
-.list-header {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-bottom: 25px;
-}
-
-.list-header h3 {
-    font-size: 24px;
-}
-
-.list-header p {
-    color: #7b8c98;
-
-    margin-top: 5px;
-}
-
-.search-box {
-    display: flex;
-
-    align-items: center;
+    let expired = 0;
 
-    gap: 10px;
 
-    border: 1px solid #dce8ee;
+    medicines.forEach(medicine => {
 
-    border-radius: 10px;
+        const status =
+            getMedicineStatus(
+                medicine.expiryDate
+            );
 
-    padding: 0 15px;
 
-    width: 280px;
-}
-
-.search-box i {
-    color: #7c919d;
-}
-
-.search-box input {
-    width: 100%;
-
-    border: none;
-
-    outline: none;
-
-    padding: 13px 0;
-
-    font-size: 14px;
-}
-
-
-/* TABLE */
-
-.medicine-table {
-    width: 100%;
-
-    border-collapse: collapse;
-}
-
-.medicine-table th {
-    text-align: left;
-
-    padding: 15px;
-
-    background: #f4f8fa;
-
-    color: #5d7380;
-
-    font-size: 13px;
-}
-
-.medicine-table td {
-    padding: 17px 15px;
-
-    border-bottom: 1px solid #edf1f3;
-
-    font-size: 14px;
-}
-
-.status {
-    display: inline-block;
-
-    padding: 7px 12px;
-
-    border-radius: 20px;
-
-    font-size: 12px;
-
-    font-weight: 700;
-}
+        if (status.className === "safe") {
 
-.status.safe {
-    background: #e7f8ef;
-    color: #198754;
-}
-
-.status.warning {
-    background: #fff3dc;
-    color: #c58315;
-}
-
-.status.expired {
-    background: #ffe7e7;
-    color: #d84b4b;
-}
-
-.delete-btn {
-    border: none;
-
-    background: #ffecec;
+            safe++;
 
-    color: #d64d4d;
+        }
 
-    padding: 8px 10px;
+        else if (
+            status.className === "warning"
+        ) {
 
-    border-radius: 8px;
+            warning++;
 
-    cursor: pointer;
-}
-
-
-/* EMPTY */
-
-.empty-state {
-    text-align: center;
+        }
 
-    padding: 50px 20px;
+        else {
 
-    color: #7c8e99;
-}
-
-.empty-state i {
-    font-size: 50px;
+            expired++;
 
-    margin-bottom: 15px;
+        }
 
-    color: #b5c7d0;
-}
+    });
 
-.empty-state h3 {
-    color: #4e6675;
 
-    margin-bottom: 8px;
-}
+    document
+        .getElementById("totalMedicines")
+        .textContent =
+        medicines.length;
 
 
-/* =========================
-   DOCTORS
-========================= */
+    document
+        .getElementById("safeMedicines")
+        .textContent =
+        safe;
 
-.doctors-section {
-    background: #ffffff;
-}
 
-.doctor-filter {
-    max-width: 700px;
+    document
+        .getElementById("expiringMedicines")
+        .textContent =
+        warning;
 
-    margin: 0 auto 40px;
 
-    display: flex;
+    document
+        .getElementById("expiredMedicines")
+        .textContent =
+        expired;
 
-    gap: 15px;
 }
-
-.doctor-grid {
-    display: grid;
 
-    grid-template-columns: repeat(3,1fr);
-
-    gap: 20px;
-}
 
-.doctor-card {
-    background: white;
+/* =================================
+   DOCTOR DIRECTORY
+================================= */
 
-    border: 1px solid #e5edf1;
+function displayDoctors(list = doctors) {
 
-    border-radius: 20px;
+    const grid =
+        document.getElementById(
+            "doctorGrid"
+        );
 
-    padding: 25px;
 
-    transition: 0.3s;
-}
+    if (list.length === 0) {
 
-.doctor-card:hover {
-    transform: translateY(-5px);
+        grid.innerHTML = `
 
-    box-shadow: 0 15px 40px rgba(30,70,90,0.1);
-}
+            <div class="empty-state">
 
-.doctor-avatar {
-    width: 65px;
-    height: 65px;
+                <i class="fa-solid fa-user-doctor"></i>
 
-    display: flex;
+                <h3>
+                    No doctors found
+                </h3>
 
-    align-items: center;
-    justify-content: center;
+                <p>
+                    Try another city or specialty.
+                </p>
 
-    border-radius: 50%;
+            </div>
 
-    background: #e2f7f5;
+        `;
 
-    color: #0a9b8f;
+        return;
+    }
 
-    font-size: 25px;
 
-    margin-bottom: 18px;
-}
+    grid.innerHTML = "";
 
-.doctor-card h3 {
-    margin-bottom: 7px;
-}
 
-.specialty {
-    color: #0a9b8f;
+    list.forEach(doctor => {
 
-    font-weight: 700;
+        const card =
+            document.createElement("div");
 
-    font-size: 14px;
 
-    margin-bottom: 15px;
-}
+        card.className =
+            "doctor-card";
 
-.doctor-info {
-    display: flex;
 
-    gap: 10px;
+        card.innerHTML = `
 
-    margin: 9px 0;
+            <div class="doctor-avatar">
 
-    color: #667b87;
+                <i class="fa-solid fa-user-doctor"></i>
 
-    font-size: 14px;
-}
+            </div>
 
-.call-btn {
-    display: block;
 
-    text-align: center;
+            <h3>
+                ${escapeHTML(doctor.name)}
+            </h3>
 
-    margin-top: 20px;
 
-    padding: 12px;
+            <div class="specialty">
 
-    background: #eaf8f6;
+                ${escapeHTML(doctor.specialty)}
 
-    color: #087f76;
+            </div>
 
-    text-decoration: none;
 
-    border-radius: 10px;
+            <div class="doctor-info">
 
-    font-weight: 700;
-}
+                <i class="fa-solid fa-location-dot"></i>
 
+                ${escapeHTML(doctor.city)}
 
-/* =========================
-   SAFETY
-========================= */
+            </div>
 
-.safety-section {
-    padding: 60px 7%;
 
-    background: #0a9b8f;
+            <div class="doctor-info">
 
-    color: white;
-}
+                <i class="fa-solid fa-hospital"></i>
 
-.safety-content {
-    max-width: 1100px;
+                ${escapeHTML(doctor.hospital)}
 
-    margin: auto;
+            </div>
 
-    display: flex;
 
-    align-items: center;
+            <a
+                class="call-btn"
+                href="tel:${doctor.phone}"
+            >
 
-    gap: 25px;
-}
+                <i class="fa-solid fa-phone"></i>
 
-.safety-icon {
-    width: 75px;
-    height: 75px;
+                Contact Doctor
 
-    flex-shrink: 0;
+            </a>
 
-    display: flex;
+        `;
 
-    align-items: center;
-    justify-content: center;
 
-    background: rgba(255,255,255,0.15);
+        grid.appendChild(card);
 
-    border-radius: 20px;
+    });
 
-    font-size: 32px;
 }
 
-.safety-content p {
-    margin-top: 8px;
 
-    opacity: 0.9;
+/* =================================
+   FILTER DOCTORS
+================================= */
 
-    line-height: 1.6;
-}
+function filterDoctors() {
 
+    const city =
+        document
+        .getElementById("doctorCity")
+        .value;
 
-/* =========================
-   FOOTER
-========================= */
 
-footer {
-    background: #102f42;
+    const specialty =
+        document
+        .getElementById("doctorSpecialty")
+        .value;
 
-    color: white;
 
-    padding: 50px 7% 20px;
-}
+    const filtered =
+        doctors.filter(doctor => {
 
-.footer-content p {
-    color: #a7bbc6;
+            const cityMatch =
+                city === "all" ||
+                doctor.city === city;
 
-    margin-top: 10px;
-}
 
-.footer-bottom {
-    border-top: 1px solid #315062;
+            const specialtyMatch =
+                specialty === "all" ||
+                doctor.specialty === specialty;
 
-    margin-top: 35px;
 
-    padding-top: 20px;
+            return cityMatch &&
+                   specialtyMatch;
 
-    display: flex;
+        });
 
-    justify-content: space-between;
 
-    color: #9cb0bb;
+    displayDoctors(filtered);
 
-    font-size: 13px;
 }
 
 
-/* =========================
+/* =================================
    TOAST
-========================= */
+================================= */
 
-.toast {
-    position: fixed;
+function showToast(message) {
 
-    right: 25px;
-    bottom: 25px;
+    const toast =
+        document.getElementById("toast");
 
-    background: #183b56;
 
-    color: white;
+    document
+        .getElementById("toastMessage")
+        .textContent =
+        message;
 
-    padding: 15px 20px;
 
-    border-radius: 12px;
+    toast.classList.add("show");
 
-    display: flex;
 
-    gap: 10px;
+    setTimeout(() => {
 
-    align-items: center;
+        toast.classList.remove("show");
 
-    transform: translateY(120px);
+    }, 3000);
 
-    opacity: 0;
-
-    transition: 0.4s;
-
-    z-index: 5000;
-}
-
-.toast.show {
-    transform: translateY(0);
-
-    opacity: 1;
-}
-
-.toast i {
-    color: #52d4b9;
 }
 
 
-/* =========================
-   MOBILE
-========================= */
+/* =================================
+   MOBILE MENU
+================================= */
 
-@media(max-width: 900px) {
+function toggleMenu() {
 
-    .navbar nav {
-        display: none;
+    const nav =
+        document.querySelector(
+            ".navbar nav"
+        );
+
+
+    if (nav.style.display === "flex") {
+
+        nav.style.display = "none";
+
     }
 
-    .menu-btn {
-        display: block;
-    }
+    else {
 
-    .hero-content {
-        grid-template-columns: 1fr;
+        nav.style.display = "flex";
 
-        gap: 40px;
-    }
+        nav.style.flexDirection =
+            "column";
 
-    .dashboard-grid {
-        grid-template-columns: repeat(2,1fr);
-    }
+        nav.style.position =
+            "absolute";
 
-    .medicine-container {
-        grid-template-columns: 1fr;
-    }
+        nav.style.top = "75px";
 
-    .doctor-grid {
-        grid-template-columns: repeat(2,1fr);
+        nav.style.left = "0";
+
+        nav.style.width = "100%";
+
+        nav.style.padding = "20px";
+
+        nav.style.background =
+            "white";
+
     }
 
 }
 
 
-@media(max-width: 600px) {
+/* =================================
+   HTML SECURITY
+================================= */
 
-    .navbar {
-        padding: 0 5%;
-    }
+function escapeHTML(value) {
 
-    .hero {
-        padding: 60px 5%;
-    }
-
-    .section {
-        padding: 65px 5%;
-    }
-
-    .hero h1 {
-        font-size: 42px;
-    }
-
-    .hero-buttons {
-        flex-direction: column;
-    }
-
-    .primary-btn,
-    .secondary-btn {
-        justify-content: center;
-    }
-
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .input-row {
-        flex-direction: column;
-
-        gap: 0;
-    }
-
-    .shelf-input {
-        flex-direction: column;
-    }
-
-    .shelf-input input,
-    .shelf-input select {
-        width: 100%;
-    }
-
-    .list-header {
-        flex-direction: column;
-
-        align-items: stretch;
-
-        gap: 15px;
-    }
-
-    .search-box {
-        width: 100%;
-    }
-
-    .medicine-table {
-        min-width: 750px;
-    }
-
-    .medicine-list {
-        overflow-x: auto;
-    }
-
-    .doctor-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .doctor-filter {
-        flex-direction: column;
-    }
-
-    .safety-content {
-        align-items: flex-start;
-    }
-
-    .footer-bottom {
-        flex-direction: column;
-
-        gap: 10px;
-    }
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
+
+
+/* =================================
+   LIVE EXPIRY PREVIEW
+================================= */
+
+document
+    .getElementById("manufacturingDate")
+    .addEventListener(
+        "change",
+        calculateExpiry
+    );
+
+
+document
+    .getElementById("shelfLife")
+    .addEventListener(
+        "input",
+        calculateExpiry
+    );
+
+
+document
+    .getElementById("shelfUnit")
+    .addEventListener(
+        "change",
+        calculateExpiry
+    );
+
+
+/* =================================
+   INITIALIZE
+================================= */
+
+displayMedicines();
+
+updateDashboard();
+
+displayDoctors();
