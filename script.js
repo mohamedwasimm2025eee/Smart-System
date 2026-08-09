@@ -1,324 +1,343 @@
-const medicineForm = document.getElementById("medicineForm");
+document.addEventListener("DOMContentLoaded", function () {
 
-const medicineName = document.getElementById("medicineName");
-const batchNumber = document.getElementById("batchNumber");
-const quantity = document.getElementById("quantity");
-const expiryDate = document.getElementById("expiryDate");
+    const medicineName =
+        document.getElementById("medicineName");
 
-const medicineTableBody =
-document.getElementById("medicineTableBody");
+    const batchNumber =
+        document.getElementById("batchNumber");
 
-const searchMedicine =
-document.getElementById("searchMedicine");
+    const expiryDate =
+        document.getElementById("expiryDate");
 
-const emptyMessage =
-document.getElementById("emptyMessage");
+    const checkButton =
+        document.getElementById("checkButton");
 
-// Load medicines from browser storage
+    const clearButton =
+        document.getElementById("clearButton");
 
-let medicines =
-JSON.parse(localStorage.getItem("smartMeditechMedicines")) || [];
-
-// Add Medicine
-
-medicineForm.addEventListener("submit", function (event) {
-
-```
-event.preventDefault();
-
-const medicine = {
-
-    id: Date.now(),
-
-    name: medicineName.value.trim(),
-
-    batch: batchNumber.value.trim(),
-
-    quantity: Number(quantity.value),
-
-    expiry: expiryDate.value
-
-};
+    const resultCard =
+        document.getElementById("resultCard");
 
 
-medicines.push(medicine);
+    /* ================= CHECK BUTTON ================= */
 
-saveMedicines();
+    checkButton.addEventListener("click", function () {
 
-medicineForm.reset();
+        const name =
+            medicineName.value.trim();
 
-displayMedicines();
-```
+        const batch =
+            batchNumber.value.trim();
 
-});
-
-// Save data
-
-function saveMedicines() {
-
-```
-localStorage.setItem(
-    "smartMeditechMedicines",
-    JSON.stringify(medicines)
-);
-```
-
-}
-
-// Calculate medicine status
-
-function getMedicineStatus(expiry) {
-
-```
-const today = new Date();
-
-today.setHours(0, 0, 0, 0);
+        const date =
+            expiryDate.value;
 
 
-const expiryDateObject = new Date(expiry);
+        /* Empty field check */
 
-expiryDateObject.setHours(0, 0, 0, 0);
+        if (name === "" || batch === "" || date === "") {
 
+            showError(
+                "Please fill all fields",
+                "Medicine name, batch number and expiry date are required."
+            );
 
-const difference =
-    expiryDateObject - today;
-
-const daysLeft =
-    Math.ceil(difference / (1000 * 60 * 60 * 24));
-
-
-if (daysLeft < 0) {
-
-    return {
-        text: "Expired",
-        className: "status-expired",
-        days: daysLeft
-    };
-
-}
+            return;
+        }
 
 
-if (daysLeft <= 30) {
+        /* Create dates safely */
 
-    return {
-        text: "Expiring Soon",
-        className: "status-soon",
-        days: daysLeft
-    };
+        const today = new Date();
 
-}
+        today.setHours(0, 0, 0, 0);
 
 
-return {
-    text: "Safe",
-    className: "status-safe",
-    days: daysLeft
-};
-```
+        const expiry = new Date(
+            date + "T00:00:00"
+        );
 
-}
+        expiry.setHours(0, 0, 0, 0);
 
-// Display medicines
 
-function displayMedicines(filter = "") {
+        /* Check invalid date */
 
-```
-medicineTableBody.innerHTML = "";
+        if (Number.isNaN(expiry.getTime())) {
 
-let filteredMedicines =
-    medicines.filter(function (medicine) {
+            showError(
+                "Invalid Date",
+                "Please select a valid expiry date."
+            );
 
-        return medicine.name
-            .toLowerCase()
-            .includes(filter.toLowerCase());
+            return;
+        }
+
+
+        /* Calculate days */
+
+        const difference =
+            expiry.getTime() -
+            today.getTime();
+
+        const days =
+            Math.ceil(
+                difference /
+                (1000 * 60 * 60 * 24)
+            );
+
+
+        /* Format date */
+
+        const formattedDate =
+            expiry.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                }
+            );
+
+
+        /* ================= EXPIRED ================= */
+
+        if (days < 0) {
+
+            showResult(
+                "expired",
+                "❌",
+                "Medicine Expired",
+                "The entered expiry date has already passed.",
+                name,
+                batch,
+                formattedDate,
+                "Expired"
+            );
+
+        }
+
+
+        /* ================= TODAY ================= */
+
+        else if (days === 0) {
+
+            showResult(
+                "expired",
+                "⚠️",
+                "Expires Today",
+                "The medicine reaches its entered expiry date today.",
+                name,
+                batch,
+                formattedDate,
+                "Expires Today"
+            );
+
+        }
+
+
+        /* ================= SOON ================= */
+
+        else if (days <= 30) {
+
+            showResult(
+                "warning",
+                "⚠️",
+                "Expiring Soon",
+                "The medicine expires within the next 30 days.",
+                name,
+                batch,
+                formattedDate,
+                days + " days remaining"
+            );
+
+        }
+
+
+        /* ================= VALID ================= */
+
+        else {
+
+            showResult(
+                "valid",
+                "✓",
+                "Medicine is Valid",
+                "The entered expiry date has not passed.",
+                name,
+                batch,
+                formattedDate,
+                days + " days remaining"
+            );
+
+        }
 
     });
 
 
-if (filteredMedicines.length === 0) {
+    /* ================= CLEAR BUTTON ================= */
 
-    emptyMessage.style.display = "block";
+    clearButton.addEventListener("click", function () {
 
-} else {
+        medicineName.value = "";
 
-    emptyMessage.style.display = "none";
+        batchNumber.value = "";
 
-}
-
-
-filteredMedicines.forEach(function (medicine) {
-
-    const status =
-        getMedicineStatus(medicine.expiry);
+        expiryDate.value = "";
 
 
-    const row =
-        document.createElement("tr");
+        resultCard.innerHTML = `
 
+            <div class="empty-result">
 
-    row.innerHTML = `
+                <div class="empty-icon">
+                    💊
+                </div>
 
-        <td>
-            <strong>${escapeHTML(medicine.name)}</strong>
-        </td>
+                <h3>
+                    Ready to Check
+                </h3>
 
-        <td>
-            ${escapeHTML(medicine.batch)}
-        </td>
+                <p>
+                    Enter medicine details and click
+                    "Check Expiry".
+                </p>
 
-        <td>
-            ${medicine.quantity}
-        </td>
+            </div>
 
-        <td>
-            ${formatDate(medicine.expiry)}
-        </td>
-
-        <td>
-            <span class="status ${status.className}">
-                ${status.text}
-            </span>
-        </td>
-
-        <td>
-            <button
-                class="delete-btn"
-                onclick="deleteMedicine(${medicine.id})">
-                Delete
-            </button>
-        </td>
-
-    `;
-
-
-    medicineTableBody.appendChild(row);
-
-});
-
-
-updateDashboard();
-```
-
-}
-
-// Delete medicine
-
-function deleteMedicine(id) {
-
-```
-medicines =
-    medicines.filter(function (medicine) {
-
-        return medicine.id !== id;
+        `;
 
     });
 
 
-saveMedicines();
+    /* ================= SHOW RESULT ================= */
 
-displayMedicines(searchMedicine.value);
-```
+    function showResult(
+        type,
+        icon,
+        title,
+        message,
+        medicine,
+        batch,
+        date,
+        status
+    ) {
 
-}
+        resultCard.innerHTML = `
 
-// Search medicine
+            <div class="result-content ${type}">
 
-searchMedicine.addEventListener("input", function () {
+                <div class="status-icon">
+                    ${icon}
+                </div>
 
-```
-displayMedicines(this.value);
-```
+                <div class="status-title">
+                    ${title}
+                </div>
 
-});
-
-// Update Dashboard
-
-function updateDashboard() {
-
-```
-let safe = 0;
-
-let soon = 0;
-
-let expired = 0;
-
-
-medicines.forEach(function (medicine) {
-
-    const status =
-        getMedicineStatus(medicine.expiry);
+                <div class="status-message">
+                    ${message}
+                </div>
 
 
-    if (status.text === "Safe") {
+                <div class="medicine-info">
 
-        safe++;
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Medicine
+                        </span>
+
+                        <span class="info-value">
+                            ${escapeHTML(medicine)}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Batch Number
+                        </span>
+
+                        <span class="info-value">
+                            ${escapeHTML(batch)}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Expiry Date
+                        </span>
+
+                        <span class="info-value">
+                            ${date}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Status
+                        </span>
+
+                        <span class="info-value">
+                            ${status}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
 
     }
 
-    else if (status.text === "Expiring Soon") {
 
-        soon++;
+    /* ================= ERROR ================= */
+
+    function showError(title, message) {
+
+        resultCard.innerHTML = `
+
+            <div class="result-content error">
+
+                <div class="status-icon">
+                    ⚠️
+                </div>
+
+                <div class="status-title">
+                    ${title}
+                </div>
+
+                <div class="status-message">
+                    ${message}
+                </div>
+
+            </div>
+
+        `;
 
     }
 
-    else {
 
-        expired++;
+    /* ================= SECURITY ================= */
+
+    function escapeHTML(value) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent = value;
+
+        return div.innerHTML;
 
     }
 
 });
-
-
-document.getElementById("totalMedicines")
-    .textContent = medicines.length;
-
-document.getElementById("safeMedicines")
-    .textContent = safe;
-
-document.getElementById("soonMedicines")
-    .textContent = soon;
-
-document.getElementById("expiredMedicines")
-    .textContent = expired;
-```
-
-}
-
-// Format Date
-
-function formatDate(dateString) {
-
-```
-const date = new Date(dateString);
-
-return date.toLocaleDateString("en-IN", {
-
-    day: "2-digit",
-
-    month: "2-digit",
-
-    year: "numeric"
-
-});
-```
-
-}
-
-// Basic HTML escaping
-
-function escapeHTML(text) {
-
-```
-const div = document.createElement("div");
-
-div.textContent = text;
-
-return div.innerHTML;
-```
-
-}
-
-// Initial display
-
-displayMedicines();
